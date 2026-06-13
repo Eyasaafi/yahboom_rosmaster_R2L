@@ -206,25 +206,11 @@ gz sim
 rviz2
 ```
 
-### Lancer le robot dans Gazebo
+
+### Lancer la simulation complète
 
 ```bash
-source /opt/ros/jazzy/setup.bash
-source ~/ros2_ws/install/setup.bash
-
-ros2 launch yahboom_rosmaster_bringup bringup.launch.py
-```
-
-### Lancer uniquement la description URDF
-
-```bash
-ros2 launch yahboom_rosmaster_description display.launch.py
-```
-
-### Lancer la simulation Gazebo complète
-
-```bash
-ros2 launch yahboom_rosmaster_gazebo gazebo.launch.py
+ros2 launch yahboom_rosmaster_bringup rosmaster_x3_navigation.launch.py slam:=True
 ```
 
 ---
