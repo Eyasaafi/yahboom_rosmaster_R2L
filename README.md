@@ -206,11 +206,11 @@ gz sim
 rviz2
 ```
 
-
 ### Lancer la simulation complète
 
 ```bash
 ros2 launch yahboom_rosmaster_bringup rosmaster_x3_navigation.launch.py slam:=True
+
 ```
 
 ---
@@ -219,7 +219,7 @@ ros2 launch yahboom_rosmaster_bringup rosmaster_x3_navigation.launch.py slam:=Tr
 
 ```
 yahboom_rosmaster_R2L/
-├── mecanum_drive_controller/        # Contrôleur roues mecanum
+├── mecanum_drive_controller/        # Contrôleur roues Ackermann
 ├── yahboom_rosmaster/               # Package principal
 ├── yahboom_rosmaster_bringup/       # Launch files de démarrage
 ├── yahboom_rosmaster_description/   # URDF / modèle du robot
@@ -232,8 +232,88 @@ yahboom_rosmaster_R2L/
 ```
 
 ---
-<img width="1920" height="1080" alt="envi(1)" src="https://github.com/user-attachments/assets/ce62523d-5e46-4e58-9c84-69921f3d7b85" />
-<img width="1920" height="1080" alt="robotrvizzzz" src="https://github.com/user-attachments/assets/5e46d44e-262a-4cb5-a6f4-0a9857b9d9b4" />
+<img width="1920" height="1080" alt="envi(1)" src="https://github.com/user-attachments/assets/5452c3ca-8a74-4c64-9824-c4ad1d5b542a" />
+<img width="1920" height="1080" alt="robotrvizzzz" src="https://github.com/user-attachments/assets/c7748857-2a42-4735-a8bb-9cf1f3f60152" />
+
+
+
+# 🛠️ Réalisation
+Cette section décrit le lancement réel du système sur le robot **Yahboom ROSMASTER R2L**, depuis la détection du port série jusqu'au démarrage de l'évitement d'obstacles via LiDAR.
+
+---
+
+### 1. Détecter le port série du LiDAR
+
+Avant de lancer le système, vérifier que le LiDAR est bien reconnu par le système :
+
+```bash
+ls /dev/ttyUSB* /dev/ttyACM* 2>/dev/null
+```
+
+> Exemple de sortie attendue : `/dev/ttyUSB0`
+
+---
+
+### 2. Créer le lien symbolique
+
+Pour que ROS puisse accéder au LiDAR de manière stable (indépendamment du port assigné) :
+
+```bash
+# Créer le lien symbolique
+sudo ln -sf /dev/ttyUSB0 /dev/lidar
+
+# Vérifier le lien créé
+ls -la /dev/lidar
+```
+
+> Sortie attendue : `/dev/lidar -> /dev/ttyUSB0`
+
+---
+
+### 3. Sourcer le workspace
+
+```bash
+source ~/yahboomcar_ws/devel/setup.bash
+```
+
+---
+
+### 4. Lancer l'évitement d'obstacles
+
+```bash
+roslaunch yahboomcar_bringup lidar_avoidance.launch
+```
+
+Ce launch file démarre :
+- Le **driver LiDAR** (lecture des données laser)
+- Le nœud d'**évitement d'obstacles** (traitement et commande moteurs)
+- La **communication série** avec la base roulante
+
+---
+
+### 🔁 Séquence complète en un bloc
+
+```bash
+# 1. Vérifier le port
+ls /dev/ttyUSB* /dev/ttyACM* 2>/dev/null
+
+# 2. Créer le lien symbolique
+sudo ln -sf /dev/ttyUSB0 /dev/lidar
+
+# 3. Vérifier
+ls -la /dev/lidar
+
+# 4. Sourcer et lancer
+source ~/yahboomcar_ws/devel/setup.bash
+roslaunch yahboomcar_bringup lidar_avoidance.launch
+```
+
+---
+
+### 📷 Démonstration
+<img width="1855" height="1056" alt="rvizreel" src="https://github.com/user-attachments/assets/db824906-d288-4af3-9b15-3c7c6e9a9aa8" />
+<img width="2141" height="2643" alt="20260603_102107" src="https://github.com/user-attachments/assets/408ed839-00d5-4a83-92d5-882ec28641b6" />
+
 
 ## Auteurs
 
